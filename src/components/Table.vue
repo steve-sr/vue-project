@@ -19,10 +19,13 @@
             <td>{{ project.name }}</td>
             <td>
               <progress
-                class="progress progress-success w-56"
+                class="progress w-56"
+                :class="
+                  getProgressClass(projectsStore.getProjectProgress(project.id))
+                "
                 :value="projectsStore.getProjectProgress(project.id)"
                 max="100"
-              ></progress>
+              />
             </td>
           </tr>
         </template>
@@ -94,5 +97,12 @@ function handleAddTask() {
     projectsStore.addTaskToProject(project.id, newTaskName.value.trim());
     newTaskName.value = "";
   }
+}
+
+function getProgressClass(progress) {
+  if (progress < 25) return "progress-error"; // rojo
+  if (progress < 50) return "progress-warning"; // naranja
+  if (progress < 75) return "progress-accent"; // amarillo
+  return "progress-success"; // verde
 }
 </script>
