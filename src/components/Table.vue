@@ -6,6 +6,7 @@
           <th>#</th>
           <th>Nombre</th>
           <th>Completado</th>
+          <th v-if="projectsStore.selectedProject">Fecha</th>
         </tr>
       </thead>
       <tbody>
@@ -45,6 +46,10 @@
                 v-model="task.completed"
                 class="checkbox checkbox-accent"
               />
+            </td>
+            <td>
+              <span v-if="task.completedAt">{{ task.completedAt }}</span>
+              <span v-else class="text-gray-400">—</span>
             </td>
           </tr>
 
@@ -105,4 +110,32 @@ function getProgressClass(progress) {
   if (progress < 75) return "progress-accent"; // amarillo
   return "progress-success"; // verde
 }
+
+import { watch } from "vue";
+
+watch(
+  () => projectsStore.selectedProject?.tasks,
+  (newTasks) => {
+    if (!newTasks) return;
+    newTasks.forEach((task) => {
+      // Si está completado y no tiene fecha, asignarla
+      if (task.completed && !task.completedAt) {
+        const now = new Date();
+        task.completedAt = now.toLocaleString("es-CR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+      }
+      // Si se desmarca, eliminar la fecha
+      if (!task.completed && task.completedAt) {
+        task.completedAt = undefined;
+      }
+    });
+  },
+  { deep: true }
+);
 </script>

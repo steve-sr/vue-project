@@ -13,6 +13,7 @@ interface Task {
   id: string;
   name: string;
   completed: boolean;
+  completedAt?: string;
 }
 
 export const useProjectsStore = defineStore("projects", () => {
